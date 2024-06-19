@@ -1,0 +1,92 @@
+class Game:
+    def __init__(self):
+        self.player = None
+        self.story = Story()
+        self.inventory = []
+
+    def start(self):
+        self.intro()
+        self.character_creation()
+        self.story.introduction()
+        while True:
+            self.show_status()
+            self.handle_decision()
+
+    def intro(self):
+        print("Welcome to the Simple Adventure Game!")
+        print("Let's start by creating your character.")
+
+    def character_creation(self):
+        name = input("Enter your character's name: ")
+        role = input("Choose your role (Warrior/Mage/Thief): ").capitalize()
+        self.player = Player(name, role)
+        print(f"Character created: {self.player}")
+
+    def show_status(self):
+        print(f"\n{self.player}")
+        print("Inventory:", ", ".join(self.inventory) if self.inventory else "Empty")
+
+    def handle_decision(self):
+        decision = input("\nWhat do you want to do? (Explore/Inventory/Quit): ").lower()
+        if decision == 'explore':
+            self.story.explore(self)
+        elif decision == 'inventory':
+            self.manage_inventory()
+        elif decision == 'quit':
+            print("Thanks for playing!")
+            exit()
+        else:
+            print("Invalid choice. Try again.")
+
+    def manage_inventory(self):
+        print("Inventory Management:")
+        action = input("Do you want to (add/remove) an item or (back) to game: ").lower()
+        if action == 'add':
+            item = input("Enter the item to add: ")
+            self.inventory.append(item)
+        elif action == 'remove':
+            item = input("Enter the item to remove: ")
+            if item in self.inventory:
+                self.inventory.remove(item)
+            else:
+                print("Item not found in inventory.")
+        elif action == 'back':
+            return
+        else:
+            print("Invalid action. Try again.")
+
+class Player:
+    def __init__(self, name, role):
+        self.name = name
+        self.role = role
+        self.health = 100
+        self.strength = 10 if role == "Warrior" else 5
+        self.magic = 10 if role == "Mage" else 5
+        self.stealth = 10 if role == "Thief" else 5
+
+    def __str__(self):
+        return f"{self.name} the {self.role} (Health: {self.health}, Strength: {self.strength}, Magic: {self.magic}, Stealth: {self.stealth})"
+
+class Story:
+    def __init__(self):
+        self.chapter = 1
+
+    def introduction(self):
+        print("\nYou find yourself at the entrance of a dark forest.")
+        print("Your quest is to explore and discover the secrets hidden within.")
+
+    def explore(self, game):
+        print("\nYou venture into the forest.")
+        print("After a short walk, you find a mysterious cave.")
+        choice = input("Do you want to (enter) the cave or (return) to the village?: ").strip().lower()
+        if choice == 'enter':
+            print("You bravely enter the cave and find a hidden treasure!")
+            game.inventory.append("Hidden Treasure")
+        elif choice == 'return':
+            print("You return to the village safely.")
+        else:
+            print("Invalid choice. Try again.")
+
+if __name__ == "__main__":
+    game = Game()
+    game.start()
